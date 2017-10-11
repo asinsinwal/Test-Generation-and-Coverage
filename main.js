@@ -60,26 +60,17 @@ var mockFileLibrary =
 {
 	pathExists:
 	{
-		'path/dirExists': {
+		'path/directoryExists': {
 			"fileExists1": "",
 			"fileExists2": "content"
 		},
-		'path/emptyDir': {}
+		'path/emptyDirectory': {}
 	},
 	fileWithContent:
 	{
-		/*
-		pathContent: 
-		{	
-  			file1: 'text content',
-		},
-		noPathContent:
-		{
-			file2: '',
-		}*/
 		"path/fileExists": {
-			"emptyFile": "",
-			"nonEmptyFile": "content"
+			"noEmptyFile": "content",
+			"emptyFile": ""
 		}
 	}
 };
@@ -120,10 +111,8 @@ function generateTestCases()
 	var content = "var subject = require('./subject.js')\nvar mock = require('mock-fs');\n";
 	for ( var funcName in functionConstraints )
 	{
-		var params = {};
-
 		// initialize params
-		params = initalizeParams(functionConstraints[funcName]);
+		var params = initalizeParams(functionConstraints[funcName]);
 		
 		
 		var constraints = functionConstraints[funcName].constraints;
@@ -132,9 +121,7 @@ function generateTestCases()
 		var pathExists      = _.some(constraints, {kind: 'fileExists' });
 
 		fillParams(constraints,params,"value");
-		
-		// Prepare function arguments.
-		//var args = Object.keys(params).map( function(k) {return params[k]; }).join(",");
+
 		var keys = Object.keys(params);
 		var args_list = [];
 		for(var i=0; i<keys.length; i++){
@@ -143,9 +130,9 @@ function generateTestCases()
 			}
 			else{
 				var new_args = [];
-				for(var j=0; j<params[keys[i]].length; j++){
-					for(var k=0; k<args_list.length; k++){
-						new_args.push(args_list[k] + "," + params[keys[i]][j]);
+				for(var x=0; x<params[keys[i]].length; x++){
+					for(var y=0; y<args_list.length; y++){
+						new_args.push(args_list[y] + "," + params[keys[i]][x]);
 					}
 				}
 				args_list = new_args;
@@ -525,9 +512,9 @@ function constraints(filePath)
 						if( child.arguments[0].name == params[p] )
 						{
 							if (p==0){
-								var dir = "path/dirExists";
-								var empty_dir = "path/emptyDir";
-								var fake_dir = "path/dirExists/fakeDir";
+								var dir = "path/directoryExists";
+								var empty_dir = "path/emptyDirectory";
+								var fake_dir = "path/directoryExists/fakeDir";
 
 								functionConstraints[funcName].constraints.push(
 								new Constraint(
@@ -559,7 +546,7 @@ function constraints(filePath)
 								}));
 							}
 							else{
-								var file = "path/fileExists/nonEmptyFile";
+								var file = "path/fileExists/noEmptyFile";
 								var empty_file = "path/fileExists/emptyFile";
 								var fake_file = "path/fileExists/fakeFile";
 
@@ -605,9 +592,9 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							var dir = "path/dirExists";
-							var empty_dir = "path/emptyDir";
-							var fake_dir = "path/dirExists/fakeDir";
+							var dir = "path/directoryExists";
+							var empty_dir = "path/emptyDirectory";
+							var fake_dir = "path/directoryExists/fakeDir";
 
 							functionConstraints[funcName].constraints.push(
 							new Constraint(
@@ -642,9 +629,7 @@ function constraints(filePath)
 				}
 
 			});
-
 			console.log( functionConstraints[funcName]);
-
 		}
 	});
 }
@@ -704,4 +689,4 @@ if (!String.prototype.format) {
 }
 
 main();
-// exports.main = main;
+exports.main = main;
