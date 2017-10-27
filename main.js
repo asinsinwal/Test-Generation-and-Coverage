@@ -7,15 +7,16 @@ var mock = require('mock-fs');
 var _ = require('underscore');
 var Random = require('random-js');
 
+var filePath;
 function main()
 {
 	var args = process.argv.slice(2);
 
 	if( args.length == 0 )
 	{
-		args = ["subject.js"];
+		args = ["mystery.js"];
 	}
-	var filePath = args[0];
+	filePath = args[0];
 
 	constraints(filePath);
 
@@ -108,7 +109,7 @@ function fillParams(constraints,params,property)
 function generateTestCases()
 {
 
-	var content = "var subject = require('./subject.js')\nvar mock = require('mock-fs');\n";
+	var content = "var subject = require('./"+filePath+"')\nvar mock = require('mock-fs');\n";
 	for ( var funcName in functionConstraints )
 	{
 		// initialize params
@@ -502,7 +503,7 @@ function constraints(filePath)
 						}
 					}
 				}
-
+				
 				if( child.type == "CallExpression" && 
 					 child.callee.property &&
 					 child.callee.property.name =="existsSync" )
@@ -511,7 +512,7 @@ function constraints(filePath)
 					{
 						if( child.arguments[0].name == params[p] )
 						{
-							if (p==0){
+							if (params[p] !== "filePath"){
 								var dir = "path/directoryExists";
 								var empty_dir = "path/emptyDirectory";
 								var fake_dir = "path/directoryExists/fakeDir";
@@ -627,7 +628,6 @@ function constraints(filePath)
 						}
 					}
 				}
-
 			});
 			console.log( functionConstraints[funcName]);
 		}
